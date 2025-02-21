@@ -23,12 +23,12 @@ Responsive UI Designed for smooth customer experience with varying screen sizes.
 - **CSS** - Styling for the form and layout
 - **React Icons** - Icons for email and password fields
 
-3. **Milestone 3**
+# **Milestone 3**
    - added express, mongoose, nodemon, dotenv
    - created .env file with credentials and port
    - created an express server
    - connected to MongoDB cluster
-4. **Milestone 4: Creating User Model and Controller that summarizes what was achieved in this milestone.**
+# **Milestone 4: Creating User Model and Controller that summarizes what was achieved in this milestone.**
    - added User model
    - Added user controller
    - Configured and enabled multer for uploads
