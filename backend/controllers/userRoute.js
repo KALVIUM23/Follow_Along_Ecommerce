@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendMail } = require("../utils/mail");
 const multer = require("multer");
+require("dotenv").config();
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -21,27 +22,26 @@ const upload = multer({ storage: storage });
 const userRoute = express.Router();
 
 userRoute.post("/signup", catchAsyncErrors(async (req, res, next) => {
-    
     const { name, email, password } = req.body;
     if (!email || !password || !name) {
-        next(new ErrorHandler("name, email and password are required", 400));
+        return next(new ErrorHandler("name, email and password are required", 400));
     }
 
     let user = await UserModel.findOne({ email: email });
     if (user) {
-        next(new ErrorHandler("user is already registered, please login", 400));
+        return next(new ErrorHandler("user is already registered, please login", 400));
     }
 
     bcrypt.hash(password, 5, async (error, hash) => {
         if (error) {
-            next(new ErrorHandler("internal server error", 500));
+            return next(new ErrorHandler("internal server error", 500));
         }
 
         let newUser = new UserModel({ name, email, password: hash });
 
         let token = jwt.sign({ id: newUser._id }, process.env.ACCESS);
 
-        let activation_url = `http://localhost:8052/user/activation/${token}`;
+        let activation_url = `http://localhost:${process.env.PORT}/user/activation/${token}`;
 
         try {
             await sendMail({
@@ -52,8 +52,7 @@ userRoute.post("/signup", catchAsyncErrors(async (req, res, next) => {
             await newUser.save();
             res.status(200).json({ status: true, message: "registration successful, please activate your account" });
         } catch (error) {
-            next(new ErrorHandler("internal server error nodemailer", 500));
-            console.log(error);
+            return next(new ErrorHandler("internal server error nodemailer", 500));
         }
     });
 }));
@@ -61,11 +60,11 @@ userRoute.post("/signup", catchAsyncErrors(async (req, res, next) => {
 userRoute.get("/activation/:token", catchAsyncErrors(async (req, res, next) => {
     let token = req.params.token;
     if (!token) {
-        next(new ErrorHandler("token not found", 404));
+        return next(new ErrorHandler("token not found", 404));
     }
     jwt.verify(token, process.env.ACCESS, async (err, decoded) => {
         if (err) {
-            next(new ErrorHandler("token is not valid", 400));
+            return next(new ErrorHandler("token is not valid", 400));
         }
 
         let id = decoded.id;
@@ -78,21 +77,21 @@ userRoute.get("/activation/:token", catchAsyncErrors(async (req, res, next) => {
 userRoute.post("/login", catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
     if (!email || !password) {
-        next(new ErrorHandler("email and password are required", 400));
+        return next(new ErrorHandler("email and password are required", 400));
     }
 
     let user = await UserModel.findOne({ email });
     if (!user) {
-        next(new ErrorHandler("please signup before login", 400));
+        return next(new ErrorHandler("please signup before login", 400));
     }
 
     if (!user.isActivated) {
-        next(new ErrorHandler("please activate your account before login", 400));
+        return next(new ErrorHandler("please activate your account before login", 400));
     }
 
     let isMatching = await bcrypt.compare(password, user.password);
     if (!isMatching) {
-        next(new ErrorHandler("password is incorrect", 400));
+        return next(new ErrorHandler("password is incorrect", 400));
     }
 
     let token = jwt.sign({ id: user._id }, process.env.ACCESS, { expiresIn: '30d' });
@@ -106,8 +105,6 @@ userRoute.post("/login", catchAsyncErrors(async (req, res, next) => {
 }));
 
 userRoute.post("/upload", upload.single("photo"), catchAsyncErrors(async (req, res, next) => {
-    console.log(req.file);
-    console.log(req.body);
     if (!req.file) {
         return next(new ErrorHandler("File not found", 400));
     }
@@ -116,3 +113,4 @@ userRoute.post("/upload", upload.single("photo"), catchAsyncErrors(async (req, r
 }));
 
 module.exports = { userRoute };
+
