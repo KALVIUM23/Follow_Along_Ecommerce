@@ -1,48 +1,22 @@
+const express = require("express");
+const connect = require("./db/connection");
+const dotenv = require("dotenv");
 
-const {app} =require("./app")
-require("dotenv").config()
+dotenv.config();
 
-const connection =require("./db/connection")
+const app = express();
 
+app.get("/test", async (req, res) => {
+    res.send("hello......");
+});
 
-
-
-app.get("/test",async(req,res)=>{
-    res.send("hello......")
-})
-
-
-const port = process.env.PORT
-app.listen(port,async()=>{
+const port = process.env.PORT || 3000;
+app.listen(port, async () => {
     try {
-        await connection
-        console.log(`app is running on http://localhost:${port}`)
+        await connect();
+        console.log(`app is running on http://localhost:${port}`);
     } catch (error) {
-         console.log(error)
+        console.log(error);
     }
-   
-})
-
-
-const{app} = require("./app")
-require("dotenv").config()
-
-const port=process.env.PORT
-const {connect}=require("./db/connection")
-
-
-
-
-
-app.listen(port,async()=>{
-    try{
-        await connect
-        
-        console.log(`app is running on http://localhost:${port}`)
-    }
-    catch(err){
-        console.log(err)
-    }
-    
- })
+});
 
