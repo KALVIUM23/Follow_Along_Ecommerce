@@ -9,7 +9,7 @@ const addressSchema=mongoose.Schema({
         type:String,
         required:true
     },
-    distrit:{
+    district:{
         type:String,
         required:true
 
@@ -59,18 +59,19 @@ const userSchema =mongoose.Schema({
         default:"user",
         enum:["user","seller","admin"]
     },
-    address:{
-        type:addressSchema
-    },
+    address:[{type:addressSchema}],
     isActivated:{
         type:Boolean,
         default:false
     },
     cart: [cartSchema],
+    profilePhoto:{
+        type:String
+    }
 
 })
 
 
 const UserModel =mongoose.model("user",userSchema)
 
-module.exports=UserModel
+module.exports=UserModel;

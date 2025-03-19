@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function ProductCard({ _id,email, name, description, category, tags, price, stock, images ,role,dele,click}) {
-   console.log(dele)
+   
 
   let navigate =useNavigate()
   
@@ -34,7 +34,6 @@ export default function ProductCard({ _id,email, name, description, category, ta
   return (
     <div className="bg-white p-3 rounded-lg shadow-md transition-all transform hover:scale-105 hover:shadow-lg hover:cursor-pointer flex flex-col justify-between duration-300 ease-in-out max-w-xs">
       <div className="w-full">
-       {console.log(role)}
         <IoIosArrowBack/>
         <img
           src={`http://localhost:8080/products-photo/${images[0]}`} 
@@ -55,4 +54,4 @@ export default function ProductCard({ _id,email, name, description, category, ta
       </div>
     </div>
   );
-}
+};

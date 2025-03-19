@@ -5,10 +5,12 @@ import {BrowserRouter,Routes,Route} from "react-router-dom"
 import './App.css'
 import Login from './pages/login'
 import Home from './pages/Home'
-import Createproudct from './components/CreateProduct'
-import SellerProductPage from './pages/SellerProductPage'
-import NavBar from './components/nav'
-
+import Createproudct from './components/Createproudct'
+import SellerProcutPage from "./pages/SellerProductPage"
+import NavBar from "./components/nav"
+import IndividualProduct from './pages/IndividualProduct'
+import Cart from './pages/cart'
+import Profile from './pages/profile'
 function App() {
   
 
@@ -22,6 +24,8 @@ function App() {
             <Route path="/create" element={<Createproudct/>}></Route>
             <Route path="/modify" element={<SellerProcutPage/>}></Route>
             <Route path="/pro" element={<IndividualProduct/>}></Route>
+            <Route path="/cart" element={<Cart/>}></Route>
+            <Route path="/profile" element={<Profile/>}></Route>
 
        </Routes>
      </BrowserRouter>

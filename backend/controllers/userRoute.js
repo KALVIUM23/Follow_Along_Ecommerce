@@ -7,8 +7,8 @@ const jwt=require("jsonwebtoken")
 const { sendMail } =require("../utils/mail")
 let userRoute= express.Router()
 const {upload}=require("../middleware/multer")
-  
-
+const auth =require("../middleware/auth")
+const path=require("path")
 
 
 
@@ -86,37 +86,42 @@ const {upload}=require("../middleware/multer")
 
   }))
 
-  userRoute.post("/upload",upload.single("photo"),catchAsyncError(async(req,res,next)=>{
+  userRoute.post("/upload",auth,upload.single("photo"),catchAsyncError(async(req,res,next)=>{
     if(!req.file){
-      next(new Errorhadler("File not found",400))
+      return next(new Errorhadler("File not found",400))
     }
-
-    res.status(200).json("Uploaded")
-}))
+    const userId =req.user_id
+    if(!userId){
+      return next(new Errorhadler("userId not found",400))
+    }
+    const fileName=path.basename(req.file.path)
+    let updated= await UserModel.findByIdAndUpdate(userId,{profilePhoto:fileName},{new:true})
+    res.status(200).json({message:updated})
+  }))
 
 userRoute.post("/login",catchAsyncError(async (req, res, next) => {
     const { email, password } = req.body;
     console.log(email)
     if (!email || !password) {
-      next(new Errorhadler("email and password are reqires", 400));
+      return next(new Errorhadler("email and password are reqires", 400));
     }
 
     let user = await UserModel.findOne({ email });
 
     if (!user) {
-      next(new Errorhadler("Please Signup", 400));
+      return next(new Errorhadler("Please Signup", 400));
     }
 
     if(!user.isActivated){
-      next(new Errorhadler("Please Signup", 400));
+      return next(new Errorhadler("Please Signup", 400));
     }
 
     await bcrypt.compare(password, user.password, function(err, result) {
       if(err){
-        next(new Errorhadler("internal server error", 500));
+       return  next(new Errorhadler("internal server error", 500));
       }
       if(!result){
-        next(new Errorhadler("password is incorrect", 400));
+        return next(new Errorhadler("password is incorrect", 400));
       }
 
       let token = jwt.sign({ id: user._id }, process.env.SECRET, {
@@ -134,6 +139,19 @@ userRoute.post("/login",catchAsyncError(async (req, res, next) => {
       
     });
   }));
+
+
+  userRoute.get("/checklogin",auth,catchAsyncError(async (req, res, next) => {
+       
+    let userId=req.user_id
+    if(!userId){
+      return next(new Errorhadler("user id not found", 400));
+    }
+    let user=await UserModel.findById(userId).select("name email role address profilePhoto");
+    res.status(200).json({status:true,message:user})
+  }));
+
+
 
 
 
