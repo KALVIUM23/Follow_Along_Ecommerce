@@ -152,6 +152,22 @@ userRoute.post("/login",catchAsyncError(async (req, res, next) => {
   }));
 
 
+  userRoute.put("/add-address",auth,catchAsyncError(async (req, res, next) => {
+       
+    let userId=req.user_id
+    if(!userId){
+      return next(new Errorhadler("user id not found", 400));
+    }
+    let user=await UserModel.findByIdAndUpdate(userId,req.body).select("name email role address profilePhoto");
+    res.status(200).json({status:true,message:user})
+  }));
+
+
+
+
+  
+
+
 
 
 

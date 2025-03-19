@@ -5,11 +5,11 @@ const addressSchema=mongoose.Schema({
         type:String,
         required:true
     },
-    state:{
+    city:{
         type:String,
         required:true
     },
-    district:{
+    address:{
         type:String,
         required:true
 
@@ -19,6 +19,9 @@ const addressSchema=mongoose.Schema({
         required:true
     },
     area:{
+        type:String
+    },
+    addressType:{
         type:String
     }
 
@@ -74,4 +77,4 @@ const userSchema =mongoose.Schema({
 
 const UserModel =mongoose.model("user",userSchema)
 
-module.exports=UserModel;
+module.exports=UserModel
