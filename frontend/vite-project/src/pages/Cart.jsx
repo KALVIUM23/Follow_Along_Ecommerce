@@ -1,52 +1,39 @@
-import CartProduct from "../components/cartProduct"
 
-import { useState, useEffect } from 'react';
 
-const Cart = () => {
+import {BrowserRouter,Routes,Route} from "react-router-dom"
+import './App.css'
+import Login from './pages/login'
+import Home from './pages/Home'
+import Createproudct from './components/Createproudct'
+import SellerProcutPage from "./pages/SellerProductPage"
+import NavBar from "./components/nav"
+import IndividualProduct from './pages/IndividualProduct'
+import Cart from  "./pages/Cart"
+import Profile from './pages/Profile'
+import Order from "./pages/Order"
+function App() {
+  
 
-    const [products, setProducts] = useState([]);
+  return (
+    <>
+      <BrowserRouter>
+        <NavBar/>
+       <Routes>
+            <Route  path="/"  element={<Home/>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/create" element={<Createproudct/>}></Route>
+            <Route path="/modify" element={<SellerProcutPage/>}></Route>
+            <Route path="/pro" element={<IndividualProduct/>}></Route>
+            <Route path="/cart" element={<Cart/>}></Route>
+            <Route path="/profile" element={<Profile/>}></Route>
+            <Route path="/order" element={<Order/>}></Route>
 
-    useEffect(() => {
-        fetch(`http://localhost:8080/product/cart`,{
-            credentials: "include"
-        })
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            return res.json();
-          })
-          .then((data) => {
-            setProducts(data.message.cart)
-            console.log("Products fetched:", data.message.cart);
-          })
-          .catch((err) => {
-            console.error(" Error fetching products:", err);
-          });
-      }, []);
-    
-    
+       </Routes>
+     </BrowserRouter>
 
-    return (
-        <div className='w-full h-screen'>
 
-            <div className='w-full h-full justify-center items-center flex'>
-                <div className='w-full md:w-4/5 lg:w-4/6 2xl:w-2/3 h-full border-l border-r border-neutral-300 flex flex-col'>
-                    <div className='w-full h-16  flex items-center justify-center'>
-                        <h1 className='text-2xl font-semibold'>Cart</h1>
-                    </div>
-                    {console.log(products,"pro")}
-                    <div className='w-full flex-grow overflow-auto px-3 py-2 gap-y-2'>
-                        {
-                            
-                            products.map(product => (
-                                <CartProduct key={product._id} {...product} />
-                            ))
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    </>
+  )
 }
-export default Cart;
+
+export default App

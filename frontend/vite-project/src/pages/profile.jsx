@@ -13,7 +13,7 @@ export default function Profile() {
 
 	const [addresses, setAddresses] = useState([]);
 	const [profilePhoto, setProfilePhoto] = useState(null)
-	const [addAddress, setAddAddress] = useState(true)
+	const [addAddress, setAddAddress] = useState(false)
 
 	useEffect(() => {
 		fetch(
