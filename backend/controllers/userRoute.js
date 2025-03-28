@@ -9,7 +9,8 @@ let userRoute = express.Router()
 const { upload } = require("../middleware/multer")
 const auth = require("../middleware/auth")
 const path = require("path")
-const orderModel= require("../model/orderModel")
+const orderModel = require("../model/orderModel")
+const mongoose=require("mongoose")
 
 
 
@@ -172,51 +173,77 @@ userRoute.put("/add-address", auth, catchAsyncError(async (req, res, next) => {
 
 
 userRoute.post("/order", auth, catchAsyncError(async (req, res, next) => {
-
-  let userId = req.user_id
-  if (!userId) {
-    return next(new Errorhadler("user id not found", 400));
-  }
-  const { orderItems, shippingAddress, totalAmount } = req.body
-  if (!Array.isArray(orderItems) || orderItems.length === 0) {
-    return next(new Errorhadler("At least one order item is required", 400));
-  }
-  for (let item of orderItems) {
-    if (!item.product || !item.quantity || !item.price) {
-      return next(new Errorhadler("Each order item must include product, quantity, and price", 400));
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    let userId = req.user_id
+   
+    if (!userId) {
+      return next(new Errorhadler("user id not found", 400));
     }
-    if (item.quantity < 1) {
-      return next(new Errorhadler("Quantity cannot be less than 1", 400));
+    let user =await UserModel.findById(userId)
+    let mailId = user.email
+    let userName = user.name
+    const { orderItems, shippingAddress, totalAmount } = req.body
+    if (!Array.isArray(orderItems) || orderItems.length === 0) {
+      return next(new Errorhadler("At least one order item is required", 400));
     }
-    if (item.price < 0) {
-      return next(new Errorhadler("Price cannot be negative", 400));
+    for (let item of orderItems) {
+      if (!item.product || !item.quantity || !item.price) {
+        return next(new Errorhadler("Each order item must include product, quantity, and price", 400));
+      }
+      if (item.quantity < 1) {
+        return next(new Errorhadler("Quantity cannot be less than 1", 400));
+      }
+      if (item.price < 0) {
+        return next(new Errorhadler("Price cannot be negative", 400));
+      }
     }
-  }
 
-  if (!shippingAddress ||
-    !shippingAddress.country ||
-    !shippingAddress.city ||
-    !shippingAddress.address ||
-    !shippingAddress.pincode ||
-    !shippingAddress.addressType) {
-    return next(new Errorhadler("All shipping address fields are required (country, city, address, pincode, addressType)", 400));
-  }
+    if (!shippingAddress ||
+      !shippingAddress.country ||
+      !shippingAddress.city ||
+      !shippingAddress.address ||
+      !shippingAddress.pincode ||
+      !shippingAddress.addressType) {
+      return next(new Errorhadler("All shipping address fields are required (country, city, address, pincode, addressType)", 400));
+    }
 
-  if (typeof totalAmount !== "number" || totalAmount <= 0) {
-    return next(new Errorhadler("Total amount must be a positive number", 400));
-  }
+    if (typeof totalAmount !== "number" || totalAmount <= 0) {
+      return next(new Errorhadler("Total amount must be a positive number", 400));
+    }
 
-  let newOrder = new orderModel({
-    orderItems,
-    shippingAddress,
-    totalAmount,
-    user: userId,
-  });
-  await newOrder.save();
-  res.status(201).json({
-    success: true,
-    message: "Order placed successfully"
-  });
+    let newOrder = new orderModel({
+      orderItems,
+      shippingAddress,
+      totalAmount,
+      user: userId,
+    });
+    console.log(mailId)
+    await newOrder.save({ session });
+    await UserModel.findByIdAndUpdate(userId, { cart: [] }, { session })
+    
+
+    await sendMail(
+      {
+        email: mailId,
+        subject: "order placed successfully",
+        message: `Hello ${userName},your order placed successfully, `,
+      }
+    )
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully"
+    });
+
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return next(new Errorhadler(error.message, 400));
+  }
 }));
 
 
