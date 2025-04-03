@@ -1,37 +1,38 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import {useLocation} from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import axios from "axios";
 
 
 const IndividualProduct = () => {
-     
-    let location =useLocation()
-    let id=location.state.id
-     console.log(id)
-    let [product,setProduct]=useState({})
+
+    let location = useLocation()
+    let id = location.state.id
+    console.log(id)
+    let [product, setProduct] = useState({})
 
 
     useEffect(() => {
-      const fetchData = async () => {
-          try {
-              let response = await axios.get(`http://localhost:8080/product/individualproduct/${id}`);
+        const fetchData = async () => {
+            try {
+                let response = await axios.get(`http://localhost:8080/product/individualproduct/${id}`);
 
-              if (response.status === 200) {  
-                  
-                setProduct(response.data.message);
-              }
-          } catch (error) {
-              console.error("Error fetching products:", error);
-          }
-      };
+                if (response.status === 200) {
 
-      fetchData();  
-  }, []);
+                    setProduct(response.data.message);
+                }
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [add, setAdd] = useState(false)
 
     const handlePrevImage = () => {
         setCurrentImageIndex((prevIndex) =>
@@ -46,40 +47,41 @@ const IndividualProduct = () => {
     };
 
 
-    const handleClick=async()=>{
-        
+    const handleClick = async () => {
+
         try {
-            let response=axios.post("http://localhost:8080/product/cart",{
-                productId:id,
-                quantity:quantity
+            let response = await axios.post("http://localhost:8080/product/cart", {
+                productId: id,
+                quantity: quantity
             }, {
-                withCredentials: true   
+                withCredentials: true
             })
-    
-            if(response.status==200){
+
+            if (response.status == 200) {
                 console.log("added to cart")
+                setAdd(true)
             }
-            
-        } catch (error){
+
+        } catch (error) {
             console.log(error)
         }
-        
 
-   }
+
+    }
 
     return (
-       
-        <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-         
-             
 
-            {product.images&&<div className="relative">
-                 <img
+        <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+
+
+
+            {product.images && <div className="relative">
+                <img
                     src={`http://localhost:8080/products-photo/${product.images[currentImageIndex]}`}
                     alt="Product"
                     className="w-full h-64 object-cover"
                 />
-                
+
                 {product.images.length > 1 && (
                     <button
                         onClick={handlePrevImage}
@@ -120,12 +122,13 @@ const IndividualProduct = () => {
                 </div>
 
                 {/* Add to Cart Button */}
-                <button onClick={handleClick} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">
-                    Add to Cart
+                <button onClick={handleClick} className={`mt-4 px-4 py-2 rounded w-full text-white ${add ? "bg-blue-300 hover:bg-blue-400" : "bg-blue-500 hover:bg-blue-600"
+                    }`}>
+                    {add ? "Added To Cart" : "Add To Cart"}
                 </button>
             </div>
         </div>
-       
+
     );
 };
 

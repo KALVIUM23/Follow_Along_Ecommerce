@@ -23,7 +23,7 @@ function Order() {
         }
        
         try {
-            let response=await axios.post("http://localhost:8080/user/order",{
+            let response=await axios.post("http://localhost:8080/order/place-order",{
                 orderItems:products,
                 shippingAddress:shippingAddreess[0],
                 totalAmount:totalPrice,

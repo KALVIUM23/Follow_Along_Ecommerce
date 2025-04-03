@@ -251,9 +251,4 @@ userRoute.post("/order", auth, catchAsyncError(async (req, res, next) => {
 
 
 
-
-
-
-
-
 module.exports = { userRoute }
