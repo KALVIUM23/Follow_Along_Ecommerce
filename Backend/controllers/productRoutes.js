@@ -174,7 +174,11 @@ productRouter.get("/cart",auth,catchAsyncError(async(req,res,next)=>{
 
 }))
 
+const express = require("express");
+const router = express.Router();
+const verifyToken = require("../middleware/authMiddleware");
+const { getCart } = require("../controllers/productController");
 
+router.get("/cart", verifyToken, getCart);
 
-
-module.exports =productRouter;
+module.exports = router;
