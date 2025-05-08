@@ -202,3 +202,73 @@ Defined **Product Schema** using Mongoose and implemented a **POST API endpoint*
 ## **Conclusion**
 This e-commerce project follows a structured milestone-based approach, ensuring a **scalable, secure, and fully functional** web application.
 
+11. Milestone 11:
+    - Created endpoint to fetch products
+    - created controller to handle get request at /product/get-products
+12. Milestone 12:
+    - fetched product data from database using axios get request to backend api url
+    - mapped the products data dynamically using card component
+13. Milestone 13:
+    - PUT endpoint to update the products
+    - Frontenv form with pre-filled data to update the products
+    - handle submit for product update form with axios
+    - Added update button to product card
+14. Milestone 14:
+    - added delete endpoint in backend
+    - added delete button to product card
+    - handleDelete which deletes the product and displays the updated products
+15. Milestone 15:
+    - added NavBar
+16. Milestone 16:
+    - added Single Product Page
+    - added Image Modal
+    - added JWT verify middleware
+    - added useremail to product schema
+    - updated login and signup controllers
+    - added middlewares to handle singup and login functionality
+17. Milestone 17:
+    - Created Cart Schema
+    - Created Cart Model and Controller
+    - Created add products and get products endpoint for Cart
+    - add products to cart from frontend
+18. Milestone 18:
+    - created endpoint.
+    - created cart page to view cart items.
+19. Milestone 19:
+    - Created cart card
+    - featched cart data and displayed it on the frontend
+20. Milestone 20:
+    - Created profile component
+21. Milestone 21:
+    - Created Address Form component
+22. Milestone 22:
+    - updated address form to send data to backend api
+    - created endpoint to handle address form data
+    - created address deletion endpoint
+23. Milestone 23:
+    - added checkout from cart
+    - added get-addresess endpoint in cart
+    - added select addresses page
+24. Milestone 24:
+    - added Order confirmation
+    - displayed products in order confirmation
+    - displayed selected address in order confirmation page using localStorage
+25. Milestone 25:
+    - added backend endpoint to confirm order
+    - created order database
+    - created order router, model and controller
+26. Milestone 26:
+    - added /user-order-details backend route and controller to fetch the orders of the user
+27. Milestone 27:
+    - added order confirmation page
+    - modified backend endpoint to confirm order
+    - created order history page
+28. Milestone 28:
+    - displayed orders in order history page
+    - created cancel order route
+29. Milestone 29:
+    - created razorpay payment gateway backend endpoints
+30. Milestone 30:
+    - integrated razorpay payment gateway in frontend
+31. Milestone 31:
+    - added redux
